@@ -9,10 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -25,6 +22,7 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+
     @NotBlank(message = "не может быть пустым.")
     @Email(message = "не является адресом электронной почты.")
     private String email;
@@ -32,6 +30,7 @@ public class Users {
     @Pattern(regexp = "^\\S*$", message = "не может содержать пробелы.")
     private String login;
 
+    @NotNull(message = "не может быть null.")
     @PastOrPresent(message = "не может быть в будущем.")
     private LocalDate birthday;
 }

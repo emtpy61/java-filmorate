@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dao.FilmRepository;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
+
+import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFoundException;
 
 @RestController
 @RequestMapping("/films")
@@ -33,14 +33,12 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) {
-        Optional<Film> f = filmRepository.findById(film.getId());
-        if (f.isEmpty()) {
-            throw new NotFoundException(String.format("Не возможно обновить.Фильма с id = %d нет в базе.",
-                    film.getId()));
-        }
-        log.info("Обновление фильма: {}", f.get());
-        log.info("Фильм обновлен: {}", film);
-        return filmRepository.save(film);
+    public Film updateFilm(@Valid @RequestBody Film newFilmData) {
+        long id = newFilmData.getId();
+        Film oldFilmData = filmRepository.findById(newFilmData.getId())
+                .orElseThrow(notFoundException("Не возможно обновить. Фильм с id = {0} не найден.", id));
+        log.info("Обновление фильма: {}", oldFilmData);
+        log.info("Фильм обновлен: {}", newFilmData);
+        return filmRepository.save(newFilmData);
     }
 }

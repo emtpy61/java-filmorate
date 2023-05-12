@@ -11,7 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -26,11 +26,11 @@ public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotNull(message = "не может быть null.")
     @NotBlank(message = "не должно быть пустым.")
     private String name;
     @Size(max = 200, message = "не должно превышать 200 символов.")
     private String description;
-    @PastOrPresent(message = "не может быть в будущем.")
     @ReleaseDateValidation
     private LocalDate releaseDate;
     @Positive(message = "не может быть отрицательным.")

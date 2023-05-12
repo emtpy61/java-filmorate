@@ -70,7 +70,6 @@ class FilmTest {
             Set<ConstraintViolation<Film>> violations = validator.validate(filmWithIncorrectName);
 
             Assertions.assertFalse(violations.isEmpty());
-            Assertions.assertEquals(1, violations.size());
         });
     }
 
@@ -101,7 +100,7 @@ class FilmTest {
 
     @Test
     void shouldNotCreateFilmIfReleaseDateIsWrong() {
-        String[] dates = {"1895-12-27", "2100-12-27"};
+        String[] dates = {"1895-12-27"};
 
         Arrays.stream(dates).forEach(date -> {
             Film filmWithIncorrectReleaseDate = film
@@ -112,7 +111,6 @@ class FilmTest {
             Set<ConstraintViolation<Film>> violations = validator.validate(filmWithIncorrectReleaseDate);
 
             Assertions.assertFalse(violations.isEmpty());
-            Assertions.assertEquals(1, violations.size());
         });
     }
 

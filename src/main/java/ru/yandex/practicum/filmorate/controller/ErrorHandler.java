@@ -33,4 +33,11 @@ public class ErrorHandler {
 
         return new ErrorMessage(message);
     }
+
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage handleOtherExceptions(final Exception e) {
+        log.error(e.getMessage());
+        return new ErrorMessage(e.getMessage());
+    }
 }
