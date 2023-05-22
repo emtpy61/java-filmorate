@@ -1,25 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder(toBuilder = true)
-public class Users {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class User {
+
     private long id;
     private String name;
 
@@ -33,4 +27,7 @@ public class Users {
     @NotNull(message = "не может быть null.")
     @PastOrPresent(message = "не может быть в будущем.")
     private LocalDate birthday;
+
+    @Singular
+    private Set<Long> friends = new HashSet<>();
 }
