@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,7 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFound
 @AllArgsConstructor
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
 
     public List<Film> getFilms() {
@@ -46,12 +49,17 @@ public class FilmService {
     }
 
     public void deleteFilmById(Long id) {
+        if (!filmStorage.existsById(id)){
+            throw new NotFoundException("Фильм с id = {0} не найден.", id);
+        }
         filmStorage.deleteById(id);
     }
 
     public void addLike(Long filmId, Long userId) {
         Film film = filmStorage.findById(filmId)
                 .orElseThrow(notFoundException("Фильм с id = {0} не найден.", filmId));
+        User user = userStorage.findById(userId)
+                .orElseThrow(notFoundException("Пользователь с id = {0} не найден.", userId));
         filmStorage.save(film.toBuilder()
                 .like(userId)
                 .build());
@@ -60,6 +68,8 @@ public class FilmService {
     public void deleteLike(Long filmId, Long userId) {
         Film film = filmStorage.findById(filmId)
                 .orElseThrow(notFoundException("Фильм с id = {0} не найден.", filmId));
+        User user = userStorage.findById(userId)
+                .orElseThrow(notFoundException("Пользователь с id = {0} не найден.", userId));
         Set<Long> likes = new HashSet<>(film.getLikes());
         if (!likes.remove(userId)) {
             throw new NotFoundException("Лайк от пользователя с id = {0} не найден.", userId);

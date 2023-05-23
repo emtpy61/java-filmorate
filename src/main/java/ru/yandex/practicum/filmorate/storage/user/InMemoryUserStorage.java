@@ -5,6 +5,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -37,18 +40,15 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> findAllById(Iterable<Long> ids) {
-        List<User> results = new ArrayList<User>();
-        for (Long id : ids) {
-            findById(id).ifPresent(results::add);
-        }
-        return results;
+        return StreamSupport.stream(ids.spliterator(), false)
+                .map(this::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void deleteById(Long id) {
-        if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь с id = {0} не найден.", id);
-        }
         users.remove(id);
     }
 
