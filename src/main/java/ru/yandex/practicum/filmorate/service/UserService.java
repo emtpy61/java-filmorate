@@ -46,7 +46,7 @@ public class UserService {
     }
 
     public void deleteUserById(Long id) {
-        if (!userStorage.existsById(id)){
+        if (!userStorage.existsById(id)) {
             throw new NotFoundException("Пользователь с id = {0} не найден.", id);
         }
         userStorage.deleteById(id);

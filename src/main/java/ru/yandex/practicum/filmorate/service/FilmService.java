@@ -49,7 +49,7 @@ public class FilmService {
     }
 
     public void deleteFilmById(Long id) {
-        if (!filmStorage.existsById(id)){
+        if (!filmStorage.existsById(id)) {
             throw new NotFoundException("Фильм с id = {0} не найден.", id);
         }
         filmStorage.deleteById(id);
