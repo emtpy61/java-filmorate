@@ -13,20 +13,18 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class UsersTest {
 
     private static ValidatorFactory validatorFactory;
     private static Validator validator;
 
-    private static Users user;
+    private static User user;
 
     @BeforeAll
     public static void createValidator() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
-        user = Users.builder()
+        user = User.builder()
                 .login("dolore")
                 .name("Nick Name")
                 .email("mail@mail.ru")
@@ -41,7 +39,7 @@ class UsersTest {
 
     @Test
     void shouldCreateUser() {
-        Set<ConstraintViolation<Users>> violations = validator.validate(user);
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
 
         Assertions.assertTrue(violations.isEmpty());
     }
@@ -51,12 +49,12 @@ class UsersTest {
         String[] logins = {"dolore ullamco", "d olore ullamc o", "", " ", null};
 
         Arrays.stream(logins).forEach(login -> {
-            Users userWithIncorrectLogin = user
+            User userWithIncorrectLogin = user
                     .toBuilder()
                     .login(login)
                     .build();
 
-            Set<ConstraintViolation<Users>> violations = validator.validate(userWithIncorrectLogin);
+            Set<ConstraintViolation<User>> violations = validator.validate(userWithIncorrectLogin);
 
             Assertions.assertFalse(violations.isEmpty());
         });
@@ -68,12 +66,12 @@ class UsersTest {
                 "", " ", null};
 
         Arrays.stream(emails).forEach(email -> {
-            Users userWithIncorrectEmail = user
+            User userWithIncorrectEmail = user
                     .toBuilder()
                     .email(email)
                     .build();
 
-            Set<ConstraintViolation<Users>> violations = validator.validate(userWithIncorrectEmail);
+            Set<ConstraintViolation<User>> violations = validator.validate(userWithIncorrectEmail);
 
             Assertions.assertFalse(violations.isEmpty());
         });
@@ -81,12 +79,12 @@ class UsersTest {
 
     @Test
     void shouldNotCreateUserIfBirthdayIsWrong() {
-        Users userWithIncorrectBirthday = user
+        User userWithIncorrectBirthday = user
                 .toBuilder()
                 .birthday(LocalDate.now().plusDays(1))
                 .build();
 
-        Set<ConstraintViolation<Users>> violations = validator.validate(userWithIncorrectBirthday);
+        Set<ConstraintViolation<User>> violations = validator.validate(userWithIncorrectBirthday);
 
         Assertions.assertFalse(violations.isEmpty());
         Assertions.assertEquals(1, violations.size());

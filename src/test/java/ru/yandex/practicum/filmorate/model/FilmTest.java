@@ -11,8 +11,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class FilmTest {
 
     private static ValidatorFactory validatorFactory;
