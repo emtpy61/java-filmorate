@@ -62,8 +62,6 @@ public class UserService {
         checkUserExists(otherId);
         Set<Integer> intersection = new HashSet<>(userStorage.getFriendsIds(id));
         intersection.retainAll(userStorage.getFriendsIds(otherId));
-//        intersection.remove(id);
-//        intersection.remove(otherId);
         return userStorage.findAllById(intersection);
     }
 
