@@ -8,8 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -18,7 +17,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 public class Film {
 
-    private long id;
+    private int id;
     @NotNull(message = "не может быть null.")
     @NotBlank(message = "не должно быть пустым.")
     private String name;
@@ -29,8 +28,6 @@ public class Film {
     @Positive(message = "не может быть отрицательным.")
     private long duration;
     @Singular
-    private Set<Long> likes = new HashSet<>();
-    @Singular
-    private Set<Genre> genres = new HashSet<>();
+    private List<Genre> genres;
     private Mpa mpa;
 }

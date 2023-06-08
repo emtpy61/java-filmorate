@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @NoArgsConstructor
@@ -14,7 +15,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 public class User {
 
-    private long id;
+    private int id;
     private String name;
 
     @NotBlank(message = "не может быть пустым.")
@@ -27,7 +28,4 @@ public class User {
     @NotNull(message = "не может быть null.")
     @PastOrPresent(message = "не может быть в будущем.")
     private LocalDate birthday;
-
-    @Singular
-    private Set<Long> friends = new HashSet<>();
 }
