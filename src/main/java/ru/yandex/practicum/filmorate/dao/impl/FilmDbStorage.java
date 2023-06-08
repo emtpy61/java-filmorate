@@ -31,12 +31,12 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public int create(Film film) {
-        String SQL_INSERT_FILM = "insert into films("
+        String sqlInsertFilm = "insert into films("
                 + "name, description, release_date, duration,mpa_id) values(?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQL_INSERT_FILM, Statement.RETURN_GENERATED_KEYS);
+                    sqlInsertFilm, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, film.getName());
             preparedStatement.setString(2, film.getDescription());
             preparedStatement.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -49,15 +49,15 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public boolean notExistsById(int id) {
-        String SQL_EXISTS_FILM = "select 1 from films where id = ?";
-        return !jdbcTemplate.queryForRowSet(SQL_EXISTS_FILM, id).next();
+        String sqlExistsFilm = "select 1 from films where id = ?";
+        return !jdbcTemplate.queryForRowSet(sqlExistsFilm, id).next();
     }
 
     @Override
     public Optional<Film> findById(int id) {
         try {
-            String SQL_FIND_FILM = "select * from films where id = ?";
-            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_FILM, filmMapper, id));
+            String sqlFindFilm = "select * from films where id = ?";
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindFilm, filmMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -65,15 +65,15 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        String SQL_GET_ALL = "select * from films";
-        return jdbcTemplate.query(SQL_GET_ALL, filmMapper);
+        String sqlGetAll = "select * from films";
+        return jdbcTemplate.query(sqlGetAll, filmMapper);
     }
 
     @Override
     public void update(Film film) {
-        String SQL_UPDATE_FILM = "update films "
+        String sqlUpdateFilm = "update films "
                 + "set name = ?, description = ?, release_date  = ?, duration  = ?, mpa_id  = ? where id = ?";
-        jdbcTemplate.update(SQL_UPDATE_FILM,
+        jdbcTemplate.update(sqlUpdateFilm,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -84,36 +84,36 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void deleteById(int id) {
-        String SQL_DELETE_FILM = "delete from films where id = ?";
-        jdbcTemplate.update(SQL_DELETE_FILM, id);
+        String sqlDeleteFilm = "delete from films where id = ?";
+        jdbcTemplate.update(sqlDeleteFilm, id);
     }
 
     @Override
     public void deleteAll() {
-        String SQL_DELETE_ALL = "delete from films";
-        jdbcTemplate.execute(SQL_DELETE_ALL);
+        String sqlDeleteAll = "delete from films";
+        jdbcTemplate.execute(sqlDeleteAll);
     }
 
     @Override
     public void addLike(int filmId, int userId) {
-        String SQL_INSERT_USER_LIKE = "insert into film_likes(film_id, user_id) values(?,?)";
-        jdbcTemplate.update(SQL_INSERT_USER_LIKE, filmId, userId);
+        String sqlInsertUserLike = "insert into film_likes(film_id, user_id) values(?,?)";
+        jdbcTemplate.update(sqlInsertUserLike, filmId, userId);
     }
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        String SQL_GET_POPULAR = "SELECT films.*, COUNT(l.film_id) as count FROM films " +
-                "LEFT JOIN film_likes l ON films.id=l.film_id " +
-                "GROUP BY films.id " +
-                "ORDER BY count DESC " +
-                "LIMIT ?";
-        return jdbcTemplate.query(SQL_GET_POPULAR, filmMapper, count);
+        String sqlGetPopular = "select films.*, count(l.film_id) as count from films " +
+                "left join film_likes l on films.id=l.film_id " +
+                "group by films.id " +
+                "order by count desc " +
+                "limit ?";
+        return jdbcTemplate.query(sqlGetPopular, filmMapper, count);
     }
 
     @Override
     public void deleteLike(int filmId, int userId) {
-        String SQL_DELETE_USER_LIKE = "delete from film_likes where film_id = ? and user_id = ?";
-        jdbcTemplate.update(SQL_DELETE_USER_LIKE, filmId, userId);
+        String sqlDeleteUserLike = "delete from film_likes where film_id = ? and user_id = ?";
+        jdbcTemplate.update(sqlDeleteUserLike, filmId, userId);
     }
 }
 

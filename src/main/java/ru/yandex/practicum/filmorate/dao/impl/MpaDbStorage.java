@@ -24,8 +24,8 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public Optional<Mpa> findById(int id) {
         try {
-            String SQL_FIND_MPA = "select * from mpa where id = ?";
-            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_MPA, mpaRowMapper, id));
+            String sqlFindMpa = "select * from mpa where id = ?";
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindMpa, mpaRowMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -33,7 +33,7 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public List<Mpa> findAll() {
-        String SQL_GET_ALL = "select * from mpa";
-        return jdbcTemplate.query(SQL_GET_ALL, mpaRowMapper);
+        String sqlGetAll = "select * from mpa";
+        return jdbcTemplate.query(sqlGetAll, mpaRowMapper);
     }
 }

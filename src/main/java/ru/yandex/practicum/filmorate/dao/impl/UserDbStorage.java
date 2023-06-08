@@ -30,11 +30,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        String SQL_INSERT_USER = "insert into users(name, email, login, birthday) values(?,?,?,?)";
+        String sqlInsertUser = "insert into users(name, email, login, birthday) values(?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
+                    sqlInsertUser, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getLogin());
@@ -49,15 +49,15 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public boolean notExistsById(int id) {
-        String SQL_EXISTS_USER = "select 1 from users where id = ?";
-        return !jdbcTemplate.queryForRowSet(SQL_EXISTS_USER, id).next();
+        String sqlExistsUser = "select 1 from users where id = ?";
+        return !jdbcTemplate.queryForRowSet(sqlExistsUser, id).next();
     }
 
     @Override
     public Optional<User> findById(int id) {
         try {
-            String SQL_FIND_USER = "select * from users where id = ?";
-            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_USER, new UserMapper(), id));
+            String sqlFindUser = "select * from users where id = ?";
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindUser, new UserMapper(), id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -65,8 +65,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAll() {
-        String SQL_GET_ALL = "select * from users";
-        return jdbcTemplate.query(SQL_GET_ALL, new UserMapper());
+        String sqlGetAll = "select * from users";
+        return jdbcTemplate.query(sqlGetAll, new UserMapper());
     }
 
     @Override
@@ -80,41 +80,41 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        String SQL_UPDATE_USER = "update users "
+        String sqlUpdateUser = "update users "
                 + "set name = ?, email = ?, login  = ?, birthday  = ? where id = ?";
-        jdbcTemplate.update(SQL_UPDATE_USER,
+        jdbcTemplate.update(sqlUpdateUser,
                 user.getName(), user.getEmail(), user.getLogin(), user.getBirthday(), user.getId());
         return user;
     }
 
     @Override
     public void deleteById(int id) {
-        String SQL_DELETE_USER = "delete from users where id = ?";
-        jdbcTemplate.update(SQL_DELETE_USER, id);
+        String sqlDeleteUser = "delete from users where id = ?";
+        jdbcTemplate.update(sqlDeleteUser, id);
     }
 
     @Override
     public void deleteAll() {
-        String SQL_DELETE_ALL = "delete from users";
-        jdbcTemplate.execute(SQL_DELETE_ALL);
+        String sqlDeleteAll = "delete from users";
+        jdbcTemplate.execute(sqlDeleteAll);
     }
 
     @Override
     public void addFriend(int id, int friendId) {
-        String SQL_INSERT_USER_FRIEND = "insert into friendship(user_id, friend_id) values(?,?)";
-        jdbcTemplate.update(SQL_INSERT_USER_FRIEND, id, friendId);
+        String sqlInsertUserFriend = "insert into friendship(user_id, friend_id) values(?,?)";
+        jdbcTemplate.update(sqlInsertUserFriend, id, friendId);
     }
 
     @Override
     public List<Integer> getFriendsIds(int id) {
-        String SQL_FIND_USER_FRIEND = "select friend_id from friendship where user_id = ?";
-        return jdbcTemplate.queryForList(SQL_FIND_USER_FRIEND, Integer.class, id);
+        String sqlFindUserFriend = "select friend_id from friendship where user_id = ?";
+        return jdbcTemplate.queryForList(sqlFindUserFriend, Integer.class, id);
     }
 
     @Override
     public void deleteFriend(int id, int friendId) {
-        String SQL_DELETE_USER_FRIEND = "delete from friendship where user_id = ? and friend_id = ?";
-        jdbcTemplate.update(SQL_DELETE_USER_FRIEND, id, friendId);
+        String sqlDeleteUserFriend = "delete from friendship where user_id = ? and friend_id = ?";
+        jdbcTemplate.update(sqlDeleteUserFriend, id, friendId);
     }
 }
 

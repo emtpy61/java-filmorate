@@ -26,8 +26,8 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Optional<Genre> findById(int id) {
         try {
-            String SQL_FIND_GENRE = "select * from genres where id = ?";
-            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_GENRE, genreMapper, id));
+            String sqlFindGenre = "select * from genres where id = ?";
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindGenre, genreMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -35,15 +35,15 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public List<Genre> findAll() {
-        String SQL_GET_ALL = "select * from genres";
-        return jdbcTemplate.query(SQL_GET_ALL, genreMapper);
+        String sqlGetAll = "select * from genres";
+        return jdbcTemplate.query(sqlGetAll, genreMapper);
     }
 
     @Override
     public List<Genre> findAllByFilm(int filmId) {
-        String SQL_GET_FILM_GENRES
+        String sqlGetFilmGenres
                 = "select genre_id from film_genres where film_id=? group by genre_id order by genre_id ASC";
-        List<Integer> ids = jdbcTemplate.queryForList(SQL_GET_FILM_GENRES, Integer.class, filmId);
+        List<Integer> ids = jdbcTemplate.queryForList(sqlGetFilmGenres, Integer.class, filmId);
 
         return ids.stream()
                 .map(this::findById)
@@ -55,13 +55,13 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public void addFilmGenre(int filmId, int genreId) {
-        String SQL_INSERT_FILM_GENRE = "insert into film_genres(film_id,genre_id) values (?,?) ";
-        jdbcTemplate.update(SQL_INSERT_FILM_GENRE, filmId, genreId);
+        String sqlInsertFilmGenre = "insert into film_genres(film_id,genre_id) values (?,?) ";
+        jdbcTemplate.update(sqlInsertFilmGenre, filmId, genreId);
     }
 
     @Override
     public void deleteFilmGenre(int filmId) {
-        String SQL_DELETE_FILM_GENRE = "delete from film_genres where film_id = ?";
-        jdbcTemplate.update(SQL_DELETE_FILM_GENRE, filmId);
+        String sqlDeleteFilmGenre = "delete from film_genres where film_id = ?";
+        jdbcTemplate.update(sqlDeleteFilmGenre, filmId);
     }
 }
