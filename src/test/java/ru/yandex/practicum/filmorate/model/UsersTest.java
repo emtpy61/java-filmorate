@@ -62,7 +62,7 @@ class UsersTest {
 
     @Test
     void shouldNotCreateUserIfEmailIsWrong() {
-        String[] emails = {"mail @mail.ru", "mail@ mail.ru", ".mail@mail.ru", "@mail.ru", "mail@","it-wrong?email@",
+        String[] emails = {"mail @mail.ru", "mail@ mail.ru", ".mail@mail.ru", "@mail.ru", "mail@", "it-wrong?email@",
                 "", " ", null};
 
         Arrays.stream(emails).forEach(email -> {
@@ -89,5 +89,4 @@ class UsersTest {
         Assertions.assertFalse(violations.isEmpty());
         Assertions.assertEquals(1, violations.size());
     }
-
 }

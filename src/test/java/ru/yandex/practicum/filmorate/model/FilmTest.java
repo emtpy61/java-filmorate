@@ -1,12 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
@@ -23,7 +25,7 @@ class FilmTest {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
         film = Film.builder()
-                .id(1L)
+                .id(1)
                 .name("nisi eiusmod")
                 .description("adipisicing")
                 .releaseDate(LocalDate.parse("1967-03-25"))
@@ -124,5 +126,4 @@ class FilmTest {
         Assertions.assertFalse(violations.isEmpty());
         Assertions.assertEquals(1, violations.size());
     }
-
 }
