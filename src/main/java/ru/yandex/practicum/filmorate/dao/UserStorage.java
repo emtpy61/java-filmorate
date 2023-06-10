@@ -14,7 +14,7 @@ public interface UserStorage {
 
     List<User> findAll();
 
-    List<User> findAllById(Iterable<Integer> ids);
+    List<User> findAllById(List<Integer> ids);
 
     User update(User user);
 

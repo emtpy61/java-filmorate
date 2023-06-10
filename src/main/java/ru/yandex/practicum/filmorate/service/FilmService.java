@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.List;
+import java.util.*;
 
 import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFoundException;
 
@@ -18,37 +20,30 @@ import static ru.yandex.practicum.filmorate.exception.NotFoundException.notFound
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private final MpaService mpaService;
-    private final GenreService genreService;
-
+    private final FilmGenreStorage filmGenreStorage;
 
     public Film addFilm(Film film) {
         film.setId(filmStorage.create(film));
-        genreService.addGenresForCurrentFilm(film);
-        fillNames(film);
-        return film;
+        addFilmGenres(film);
+        return setFilmGenres(film);
     }
 
     public Film findFilmById(int id) {
         Film film = filmStorage.findById(id)
                 .orElseThrow(notFoundException("Фильм с id = {0} не найден.", id));
-        fillNames(film);
-        return film;
+        return setFilmGenres(film);
     }
 
-    public List<Film> getFilms() {
-        List<Film> films = filmStorage.findAll();
-        films.forEach(this::fillNames);
-        return films;
+    public Collection<Film> getFilms() {
+        Collection<Film> films = filmStorage.findAll();
+        return setFilmsGenres(films);
     }
 
     public Film updateFilm(Film film) {
         checkFilmExists(film.getId());
-        genreService.updateGenresForCurrentFilm(film);
-        fillNames(film);
         filmStorage.update(film);
-        fillNames(film);
-        return film;
+        updateFilmGenres(film);
+        return setFilmGenres(film);
     }
 
     public void deleteFilmById(int id) {
@@ -72,10 +67,9 @@ public class FilmService {
         filmStorage.deleteLike(filmId, userId);
     }
 
-    public List<Film> popularFilms(int count) {
+    public Collection<Film> popularFilms(int count) {
         List<Film> films = filmStorage.getPopularFilms(count);
-        films.forEach(this::fillNames);
-        return films;
+        return setFilmsGenres(films);
     }
 
     private void checkFilmExists(int id) {
@@ -90,8 +84,35 @@ public class FilmService {
         }
     }
 
-    private void fillNames(Film film) {
-        mpaService.addMpaToFilm(film);
-        genreService.getGenreForCurrentFilm(film);
+    private Collection<Film> setFilmsGenres(Collection<Film> films) {
+        Map<Integer, Collection<Genre>> filmGenresMap = filmGenreStorage.getAllFilmGenres(films);
+
+        films.forEach(film -> {
+            int filmId = film.getId();
+            film.setGenres(filmGenresMap.getOrDefault(filmId, new ArrayList<>()));
+        });
+
+        return films;
+    }
+
+    private Film setFilmGenres(Film film) {
+        film.setGenres(filmGenreStorage.findAllByFilmId(film.getId()));
+        return film;
+    }
+
+    private void addFilmGenres(Film film) {
+        if (Objects.isNull(film.getGenres())) {
+            return;
+        }
+        filmGenreStorage.addFilmGenres(film);
+    }
+
+    private void updateFilmGenres(Film film) {
+        filmGenreStorage.deleteFilmGenre(film);
+        addFilmGenres(film);
+    }
+
+    private void getGenreForFilm(Film film) {
+        film.setGenres(filmGenreStorage.findAllByFilmId(film.getId()));
     }
 }

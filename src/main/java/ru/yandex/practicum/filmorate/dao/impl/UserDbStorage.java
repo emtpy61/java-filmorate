@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -9,24 +10,20 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.mappers.UserMapper;
 
-import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Component("UserDbStorage")
+@AllArgsConstructor
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
-    public UserDbStorage(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+    private final UserMapper userMapper;
 
     @Override
     public User create(User user) {
@@ -57,7 +54,7 @@ public class UserDbStorage implements UserStorage {
     public Optional<User> findById(int id) {
         try {
             String sqlFindUser = "select * from users where id = ?";
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindUser, new UserMapper(), id));
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindUser, userMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
@@ -66,16 +63,14 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> findAll() {
         String sqlGetAll = "select * from users";
-        return jdbcTemplate.query(sqlGetAll, new UserMapper());
+        return jdbcTemplate.query(sqlGetAll, userMapper);
     }
 
     @Override
-    public List<User> findAllById(Iterable<Integer> ids) {
-        return StreamSupport.stream(ids.spliterator(), false)
-                .map(this::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+    public List<User> findAllById(List<Integer> ids) {
+        String inParams = String.join(",", Collections.nCopies(ids.size(), "?"));
+        String sqlFindUsersById = String.format("select * from users where id in (%s)", inParams);
+        return jdbcTemplate.query(sqlFindUsersById, userMapper, ids.toArray());
     }
 
     @Override

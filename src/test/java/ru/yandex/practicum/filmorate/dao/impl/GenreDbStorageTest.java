@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,7 @@ class GenreDbStorageTest {
 
     @Test
     void testGetAllGenres() {
-        List<Genre> genres = genreDbStorage.findAll();
+        Collection<Genre> genres = genreDbStorage.findAll();
         assertEquals(6, genres.size());
     }
 }

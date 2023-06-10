@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collection;
 
 
 @NoArgsConstructor
@@ -28,6 +28,6 @@ public class Film {
     @Positive(message = "не может быть отрицательным.")
     private long duration;
     @Singular
-    private List<Genre> genres;
+    private Collection<Genre> genres;
     private Mpa mpa;
 }

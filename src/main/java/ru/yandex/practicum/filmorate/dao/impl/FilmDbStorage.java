@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
+import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.dao.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.mappers.FilmMapper;
 
-import javax.sql.DataSource;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -19,15 +18,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component("FilmDbStorage")
+@AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FilmMapper filmMapper;
 
-    private final RowMapper<Film> filmMapper = new FilmMapper();
-
-    public FilmDbStorage(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
 
     @Override
     public int create(Film film) {
@@ -56,7 +52,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Optional<Film> findById(int id) {
         try {
-            String sqlFindFilm = "select * from films where id = ?";
+            String sqlFindFilm = "select * "
+                    + "from films "
+                    + "left join mpa mpa on films.mpa_id = mpa.id "
+                    + "where films.id = ? ";
             return Optional.ofNullable(jdbcTemplate.queryForObject(sqlFindFilm, filmMapper, id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -65,7 +64,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findAll() {
-        String sqlGetAll = "select * from films";
+        String sqlGetAll = "select * "
+                + "from films "
+                + "left join mpa mpa on films.mpa_id = mpa.id ";
         return jdbcTemplate.query(sqlGetAll, filmMapper);
     }
 
@@ -102,7 +103,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        String sqlGetPopular = "select films.*, count(l.film_id) as count from films " +
+        String sqlGetPopular = "select films.*,mpa.*, count(l.film_id) as count from films " +
+                "left join mpa mpa on films.mpa_id = mpa.id " +
                 "left join film_likes l on films.id=l.film_id " +
                 "group by films.id " +
                 "order by count desc " +

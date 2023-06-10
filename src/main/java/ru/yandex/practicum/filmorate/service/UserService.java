@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class UserService {
         intersection.retainAll(userStorage.getFriendsIds(otherId));
 //        intersection.remove(id);
 //        intersection.remove(otherId);
-        return userStorage.findAllById(intersection);
+        return userStorage.findAllById(new ArrayList<>(intersection));
     }
 
     public void deleteFriend(int id, int friendId) {
