@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
@@ -17,7 +17,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @GetMapping
-    public List<Film> getFilms() {
+    public Collection<Film> getFilms() {
         log.info("Получение списка всех фильмов");
         return filmService.getFilms();
     }
@@ -41,32 +41,32 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteFilmById(@PathVariable Long id) {
+    public void deleteFilmById(@PathVariable int id) {
         log.info("Удаление фильма по id {}.", id);
         filmService.deleteFilmById(id);
     }
 
     @GetMapping("/{id}")
-    public Film findFilmById(@PathVariable Long id) {
+    public Film findFilmById(@PathVariable int id) {
         log.info("Получение фильма по id {}.", id);
         return filmService.findFilmById(id);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLikeFilm(@PathVariable Long filmId, @PathVariable Long userId) {
+    public void addLikeFilm(@PathVariable int filmId, @PathVariable int userId) {
         log.debug("Пользователь с id {} ставит лайк фильму с id {}", userId, filmId);
         filmService.addLike(filmId, userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void deleteLikeFilm(@PathVariable Long filmId, @PathVariable Long userId) {
+    public void deleteLikeFilm(@PathVariable int filmId, @PathVariable int userId) {
         log.debug("Пользователь с id {} удаляет лайк к фильму с id {}", userId, filmId);
         filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(
-            @RequestParam(value = "count", required = false, defaultValue = "10") Long count) {
+    public Collection<Film> getPopularFilms(
+            @RequestParam(value = "count", required = false, defaultValue = "10") int count) {
         return filmService.popularFilms(count);
     }
 }
